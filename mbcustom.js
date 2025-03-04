@@ -1,30 +1,24 @@
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("Custom script loaded!"); // Debug log
-
-    // Hide the default Metabase header
-    const originalHeader = document.querySelector("header");
-    if (originalHeader) {
-        originalHeader.style.display = "none";
-        console.log("Original header hidden");
+function hideHeader() {
+    const header = document.querySelector("header");
+    if (header) {
+        header.style.display = "none";
+        console.log("Header hidden");
     } else {
-        console.log("Original header not found");
+        console.log("Header not found, setting up observer...");
+        
+        // Observe the DOM for changes and hide the header when it appears
+        const observer = new MutationObserver((mutations, obs) => {
+            const newHeader = document.querySelector("header");
+            if (newHeader) {
+                newHeader.style.display = "none";
+                console.log("Header found and hidden");
+                obs.disconnect(); // Stop observing once header is hidden
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
     }
+}
 
-    // Create a new dummy header
-    const newHeader = document.createElement("div");
-    newHeader.style.position = "fixed";
-    newHeader.style.top = "0";
-    newHeader.style.left = "0";
-    newHeader.style.width = "100%";
-    newHeader.style.height = "50px";
-    newHeader.style.background = "#333";
-    newHeader.style.color = "white";
-    newHeader.style.display = "flex";
-    newHeader.style.alignItems = "center";
-    newHeader.style.justifyContent = "center";
-    newHeader.style.zIndex = "1000";
-    newHeader.innerHTML = "<b>Custom Dummy Header</b>";
-
-    document.body.prepend(newHeader);
-    console.log("New dummy header added");
-});
+// Run immediately in case header is already available
+hideHeader();
